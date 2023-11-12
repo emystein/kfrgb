@@ -462,40 +462,50 @@ function check_ramsticks_on_smbus() {
 				if [[ "${debug}" = 'true' ]]; then
 					print_small_separator
 				fi
-				if ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq "\ +vendor: Kingston" || ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq "\ +product: KF5" || ! echo "${smbus_detect}" | grep "^${ramstick_hex:0:1}" | awk -F':' '{print $2}'| grep -q "\ ${ramstick_hex}\ " || ! echo "${smbus_detect}" | grep "^${ramslot_value_one_check_hex:0:1}" | awk -F':' '{print $2}'| grep -q "\ ${ramslot_value_one_check_hex}\ " || ! echo "${smbus_detect}" | grep "^${ramslot_value_two_check_hex:0:1}" | awk -F':' '{print $2}'| grep -q "\ ${ramslot_value_two_check_hex}\ "; then
+				if ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq " +vendor: Kingston" || ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq " +product: KF5" || ! echo "${smbus_detect}" | grep "^${ramstick_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramstick_hex} " || ! echo "${smbus_detect}" | grep "^${ramslot_value_one_check_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramslot_value_one_check_hex} " || ! echo "${smbus_detect}" | grep "^${ramslot_value_two_check_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramslot_value_two_check_hex} "; then
 					echo -e "\e[1;33m- Kingston Fury DDR5 RAM in slot ${ramslot} not found on SMBus i2c-${smbus_number_check}.\e[0m"
 					ram_not_found='true'
 					debug_color='1;31'
 				else
-					detect_registers_hex
-					if [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] || [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_one_expected_hex}" ]]; then
-						detect_blocks_hex
-						if [[ "${ramslot_block_1_detected_hex}" = "${ramslot_block_1_expected_hex}" ]] && [[ "${ramslot_block_2_detected_hex}" = "${ramslot_block_2_expected_hex}" ]] && [[ "${ramslot_block_3_detected_hex}" = "${ramslot_block_3_expected_hex}" ]] && [[ "${ramslot_block_4_detected_hex}" = "${ramslot_block_4_expected_hex}" ]] && [[ "${ramslot_block_5_detected_hex}" =~ ^("${ramslot_block_5_one_expected_hex}"|"${ramslot_block_5_two_expected_hex}")$ ]]; then
-							if [[ "${ramslot_block_5_detected_hex}" = "${ramslot_block_5_one_expected_hex}" ]]; then
-								submodel='BEAST'
-							elif [[ "${ramslot_block_5_detected_hex}" = "${ramslot_block_5_two_expected_hex}" ]]; then
-								submodel='RENEGADE'
-							fi
-							if [[ -z "${detected_submodels}" ]]; then
-								detected_submodels="${submodel}"
-							else
-								if ! echo "${detected_submodels}" | grep -q "${submodel}"; then
-									detected_submodels+="\${submodel}"
-								fi
-							fi
-							set_ramstick_hex
-							echo -e "\e[1;32m- Kingston Fury DDR5 RAM in slot ${ramslot} found on SMBus i2c-${smbus_number_check}! \e[1;31m(Please MAKE REALLY SURE this is a Kingston Fury ${submodel} DDR5 RGB!)\e[0m"
-							debug_color='1;32'
-							if [[ "${debug}" != 'true' ]]; then
-								echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | tail -n +2 | sed -e "s/          \+/   /g"
-							fi
-						else
-							echo -e "\e[1;31m- RAM in slot ${ramslot} on SMBus i2c-${smbus_number_check} doesn't seems to be a Kingston Fury ${supported_submodels} DDR5!\e[0m"
-							debug_color='1;31'
-						fi
-					else
-						echo -e "\e[1;31m- RAM in slot ${ramslot} on SMBus i2c-${smbus_number_check} doesn't seems to be a Kingston Fury ${supported_submodels} DDR5!\e[0m"
-						debug_color='1;31'
+					#detect_registers_hex
+					# if [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] || [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_one_expected_hex}" ]]; then
+					#if [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_three_expected_hex}" ]] ; then
+						#detect_blocks_hex
+						#if [[ "${ramslot_block_1_detected_hex}" = "${ramslot_block_1_expected_hex}" ]] && [[ "${ramslot_block_2_detected_hex}" = "${ramslot_block_2_expected_hex}" ]] && [[ "${ramslot_block_3_detected_hex}" = "${ramslot_block_3_expected_hex}" ]] && [[ "${ramslot_block_4_detected_hex}" = "${ramslot_block_4_expected_hex}" ]] && [[ "${ramslot_block_5_detected_hex}" =~ ^("${ramslot_block_5_one_expected_hex}"|"${ramslot_block_5_two_expected_hex}")$ ]]; then
+						#	if [[ "${ramslot_block_5_detected_hex}" = "${ramslot_block_5_one_expected_hex}" ]]; then
+						#		submodel='BEAST'
+						#	elif [[ "${ramslot_block_5_detected_hex}" = "${ramslot_block_5_two_expected_hex}" ]]; then
+						#		submodel='RENEGADE'
+						#	fi
+						#	if [[ -z "${detected_submodels}" ]]; then
+						#		detected_submodels="${submodel}"
+						#	else
+						#		if ! echo "${detected_submodels}" | grep -q "${submodel}"; then
+						#			detected_submodels+="\${submodel}"
+						#		fi
+						#	fi
+						# set_ramstick_hex
+						# echo -e "\e[1;32m- Kingston Fury DDR5 RAM in slot ${ramslot} found on SMBus i2c-${smbus_number_check}! \e[1;31m(Please MAKE REALLY SURE this is a Kingston Fury ${submodel} DDR5 RGB!)\e[0m"
+						# debug_color='1;32'
+						# if [[ "${debug}" != 'true' ]]; then
+						#	echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | tail -n +2 | sed -e "s/          \+/   /g"
+						# fi
+						#else
+						#	echo -e "\e[1;31m- RAM in slot ${ramslot} on SMBus i2c-${smbus_number_check} doesn't seems to be a Kingston Fury ${supported_submodels} DDR5!\e[0m"
+						# 	debug_color='1;31'
+						#fi
+					#else
+					#	echo -e "\e[1;31m- RAM in slot ${ramslot} on SMBus i2c-${smbus_number_check} doesn't seems to be a Kingston Fury ${supported_submodels} DDR5! \e[0m"
+					#	echo -e "\e[1;31m- Expected Register value: ${ramslot_register_one_expected_hex}, Actual value: ${ramslot_register_21_detected_hex} \e[0m"
+					#	echo -e "\e[1;31m- Expected Register value: ${ramslot_register_two_expected_hex}, Actual value: ${ramslot_register_25_detected_hex} \e[0m"
+					#	echo -e "\e[1;31m- Expected Register value: ${ramslot_register_three_expected_hex}, Actual value: ${ramslot_register_27_detected_hex} \e[0m"
+					#	debug_color='1;31'
+					#fi
+					set_ramstick_hex
+					echo -e "\e[1;32m- Kingston Fury DDR5 RAM in slot ${ramslot} found on SMBus i2c-${smbus_number_check}! \e[1;31m(Please MAKE REALLY SURE this is a Kingston Fury ${submodel} DDR5 RGB!)\e[0m"
+					debug_color='1;32'
+					if [[ "${debug}" != 'true' ]]; then
+						echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | tail -n +2 | sed -e "s/          \+/   /g"
 					fi
 				fi
 				check_hex_values "${ramstick_hex} ${ramslot_value_one_check_hex} ${ramslot_value_two_check_hex} ${ramslot_value_expected_hex}"
@@ -564,7 +574,7 @@ function i2cdump_detect_blocks() {
 
 function print_debug_info() {
 
-	if ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq "\ +vendor: Kingston" || ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq "\ +product: KF5"; then
+	if ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq " +vendor: Kingston" || ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq " +product: KF5"; then
 		debug_lshw_color='1;31'
 	else
 		debug_lshw_color='1;32'
@@ -573,17 +583,17 @@ function print_debug_info() {
 	echo -e "\e[${debug_lshw_color}m * lshw (check bank ${bank}):\e[0m"
 	echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1
 	echo
-	if echo "${smbus_detect}" | grep "^${ramstick_hex:0:1}" | awk -F':' '{print $2}' | grep -q "\ ${ramstick_hex}\ "; then
+	if echo "${smbus_detect}" | grep "^${ramstick_hex:0:1}" | awk -F':' '{print $2}' | grep -q " ${ramstick_hex} "; then
 		echo -e "\e[1;32m  * Address 0x${ramstick_hex} found in SMBus i2c-${smbus_number_check}.\e[0m"
 	else
 		echo -e "\e[1;31m  * Address 0x${ramstick_hex} not found in SMBus i2c-${smbus_number_check}.\e[0m"
 	fi
-	if echo "${smbus_detect}" | grep "^${ramslot_value_one_check_hex:0:1}" | awk -F':' '{print $2}' | grep -q "\ ${ramslot_value_one_check_hex}\ "; then
+	if echo "${smbus_detect}" | grep "^${ramslot_value_one_check_hex:0:1}" | awk -F':' '{print $2}' | grep -q " ${ramslot_value_one_check_hex} "; then
 		echo -e "\e[1;32m  * Address 0x${ramslot_value_one_check_hex} found in SMBus i2c-${smbus_number_check}.\e[0m"
 	else
 		echo -e "\e[1;31m  * Address 0x${ramslot_value_one_check_hex} not found in SMBus i2c-${smbus_number_check}.\e[0m"
 	fi
-	if echo "${smbus_detect}" | grep "^${ramslot_value_two_check_hex:0:1}" | awk -F':' '{print $2}' | grep -q "\ ${ramslot_value_two_check_hex}\ "; then
+	if echo "${smbus_detect}" | grep "^${ramslot_value_two_check_hex:0:1}" | awk -F':' '{print $2}' | grep -q " ${ramslot_value_two_check_hex} "; then
 		echo -e "\e[1;32m  * Address 0x${ramslot_value_two_check_hex} found in SMBus i2c-${smbus_number_check}.\e[0m"
 	else
 		echo -e "\e[1;31m  * Address 0x${ramslot_value_two_check_hex} not found in SMBus i2c-${smbus_number_check}.\e[0m"
@@ -737,7 +747,7 @@ function select_smbus() {
 	fi
 	echo
 	echo -e "\e[1;32m- Please select an SMBus (or type 'quit' to exit from ${kfrgb_name}:\e[0m"
-	echo -e "${smbuses}" | grep -E "\ ?\ i2c-(${smbus_numbers_check//' '/$'|'})"
+	echo -e "${smbuses}" | grep -E " ? i2c-(${smbus_numbers_check//' '/$'|'})"
 	while true; do
 		read -p " choose> " smbus_numbers
 		if [[ "${smbus_numbers,,}" = 'quit' ]]; then

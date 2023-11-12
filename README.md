@@ -1,4 +1,3 @@
-
 # kfrgb
 
 # Version:    0.9.5
@@ -24,9 +23,16 @@ Not all modes are fully supported:
 - Modes twilight, teleport, flame, voltage, countdown and rhythm: we lack the hex values to set any of their parameters, nevertheless i've used values from other modes to set them. It works, but likely not the same way as with the official app.
 - Modes breath, breath_byledcolor and dynamic: we lack the hex values to set speed, values from other modes doesn't work. These modes will run at their default speed or the last speed set by the official app.
 
+### PREREQUISITES
+- https://gitlab.com/CalcProgrammer1/OpenRGB#smbus-access-1
+- Depending on the Motherboard model, the kernel option 'acpi\_enforce\_resources=lax' set. See: https://wiki.archlinux.org/title/Lm_sensors
+- i2c-tools
+- lshw
+- yad
+
 ### INSTALL
 ```
-curl -o /tmp/kfrgb.sh 'https://raw.githubusercontent.com/KeyofBlueS/kfrgb/master/kfrgb.sh'
+curl -o /tmp/kfrgb.sh 'https://raw.githubusercontent.com/emystein/kfrgb/master/kfrgb.sh'
 sudo mkdir -p /opt/kfrgb/
 sudo mv /tmp/kfrgb.sh /opt/kfrgb/
 sudo chown root:root /opt/kfrgb/kfrgb.sh
