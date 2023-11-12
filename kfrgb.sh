@@ -462,50 +462,52 @@ function check_ramsticks_on_smbus() {
 				if [[ "${debug}" = 'true' ]]; then
 					print_small_separator
 				fi
-				if ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq " +vendor: Kingston" || ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq " +product: KF5" || ! echo "${smbus_detect}" | grep "^${ramstick_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramstick_hex} " || ! echo "${smbus_detect}" | grep "^${ramslot_value_one_check_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramslot_value_one_check_hex} " || ! echo "${smbus_detect}" | grep "^${ramslot_value_two_check_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramslot_value_two_check_hex} "; then
-					echo -e "\e[1;33m- Kingston Fury DDR5 RAM in slot ${ramslot} not found on SMBus i2c-${smbus_number_check}.\e[0m"
-					ram_not_found='true'
-					debug_color='1;31'
-				else
-					#detect_registers_hex
-					# if [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] || [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_one_expected_hex}" ]]; then
-					#if [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_three_expected_hex}" ]] ; then
-						#detect_blocks_hex
-						#if [[ "${ramslot_block_1_detected_hex}" = "${ramslot_block_1_expected_hex}" ]] && [[ "${ramslot_block_2_detected_hex}" = "${ramslot_block_2_expected_hex}" ]] && [[ "${ramslot_block_3_detected_hex}" = "${ramslot_block_3_expected_hex}" ]] && [[ "${ramslot_block_4_detected_hex}" = "${ramslot_block_4_expected_hex}" ]] && [[ "${ramslot_block_5_detected_hex}" =~ ^("${ramslot_block_5_one_expected_hex}"|"${ramslot_block_5_two_expected_hex}")$ ]]; then
-						#	if [[ "${ramslot_block_5_detected_hex}" = "${ramslot_block_5_one_expected_hex}" ]]; then
-						#		submodel='BEAST'
-						#	elif [[ "${ramslot_block_5_detected_hex}" = "${ramslot_block_5_two_expected_hex}" ]]; then
-						#		submodel='RENEGADE'
-						#	fi
-						#	if [[ -z "${detected_submodels}" ]]; then
-						#		detected_submodels="${submodel}"
-						#	else
-						#		if ! echo "${detected_submodels}" | grep -q "${submodel}"; then
-						#			detected_submodels+="\${submodel}"
-						#		fi
-						#	fi
-						# set_ramstick_hex
-						# echo -e "\e[1;32m- Kingston Fury DDR5 RAM in slot ${ramslot} found on SMBus i2c-${smbus_number_check}! \e[1;31m(Please MAKE REALLY SURE this is a Kingston Fury ${submodel} DDR5 RGB!)\e[0m"
-						# debug_color='1;32'
-						# if [[ "${debug}" != 'true' ]]; then
-						#	echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | tail -n +2 | sed -e "s/          \+/   /g"
-						# fi
-						#else
-						#	echo -e "\e[1;31m- RAM in slot ${ramslot} on SMBus i2c-${smbus_number_check} doesn't seems to be a Kingston Fury ${supported_submodels} DDR5!\e[0m"
-						# 	debug_color='1;31'
-						#fi
-					#else
-					#	echo -e "\e[1;31m- RAM in slot ${ramslot} on SMBus i2c-${smbus_number_check} doesn't seems to be a Kingston Fury ${supported_submodels} DDR5! \e[0m"
-					#	echo -e "\e[1;31m- Expected Register value: ${ramslot_register_one_expected_hex}, Actual value: ${ramslot_register_21_detected_hex} \e[0m"
-					#	echo -e "\e[1;31m- Expected Register value: ${ramslot_register_two_expected_hex}, Actual value: ${ramslot_register_25_detected_hex} \e[0m"
-					#	echo -e "\e[1;31m- Expected Register value: ${ramslot_register_three_expected_hex}, Actual value: ${ramslot_register_27_detected_hex} \e[0m"
-					#	debug_color='1;31'
-					#fi
+				if [[ "${skip_model_detection}" = 'true' ]]; then
 					set_ramstick_hex
-					echo -e "\e[1;32m- Kingston Fury DDR5 RAM in slot ${ramslot} found on SMBus i2c-${smbus_number_check}! \e[1;31m(Please MAKE REALLY SURE this is a Kingston Fury ${submodel} DDR5 RGB!)\e[0m"
+					echo -e "\e[1;32m- Kingston Fury DDR5 RAM in slot ${ramslot} ASSUMED on SMBus i2c-${smbus_number_check}! \e[1;31m(Please MAKE REALLY SURE this is a Kingston Fury ${submodel} DDR5 RGB!)\e[0m"
 					debug_color='1;32'
 					if [[ "${debug}" != 'true' ]]; then
 						echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | tail -n +2 | sed -e "s/          \+/   /g"
+					fi
+				else
+					if ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq " +vendor: Kingston" || ! echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | grep -Eq " +product: KF5" || ! echo "${smbus_detect}" | grep "^${ramstick_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramstick_hex} " || ! echo "${smbus_detect}" | grep "^${ramslot_value_one_check_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramslot_value_one_check_hex} " || ! echo "${smbus_detect}" | grep "^${ramslot_value_two_check_hex:0:1}" | awk -F':' '{print $2}'| grep -q " ${ramslot_value_two_check_hex} "; then
+						echo -e "\e[1;33m- Kingston Fury DDR5 RAM in slot ${ramslot} not found on SMBus i2c-${smbus_number_check}.\e[0m"
+						ram_not_found='true'
+						debug_color='1;31'
+					else
+						detect_registers_hex
+						if [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_one_expected_hex}" ]] || [[ "${ramslot_register_21_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_25_detected_hex}" = "${ramslot_register_two_expected_hex}" ]] && [[ "${ramslot_register_27_detected_hex}" = "${ramslot_register_one_expected_hex}" ]]; then
+							detect_blocks_hex
+							if [[ "${ramslot_block_1_detected_hex}" = "${ramslot_block_1_expected_hex}" ]] && [[ "${ramslot_block_2_detected_hex}" = "${ramslot_block_2_expected_hex}" ]] && [[ "${ramslot_block_3_detected_hex}" = "${ramslot_block_3_expected_hex}" ]] && [[ "${ramslot_block_4_detected_hex}" = "${ramslot_block_4_expected_hex}" ]] && [[ "${ramslot_block_5_detected_hex}" =~ ^("${ramslot_block_5_one_expected_hex}"|"${ramslot_block_5_two_expected_hex}")$ ]]; then
+								if [[ "${ramslot_block_5_detected_hex}" = "${ramslot_block_5_one_expected_hex}" ]]; then
+									submodel='BEAST'
+								elif [[ "${ramslot_block_5_detected_hex}" = "${ramslot_block_5_two_expected_hex}" ]]; then
+									submodel='RENEGADE'
+								fi
+								if [[ -z "${detected_submodels}" ]]; then
+									detected_submodels="${submodel}"
+								else
+									if ! echo "${detected_submodels}" | grep -q "${submodel}"; then
+										detected_submodels+="\${submodel}"
+									fi
+								fi
+							set_ramstick_hex
+							echo -e "\e[1;32m- Kingston Fury DDR5 RAM in slot ${ramslot} found on SMBus i2c-${smbus_number_check}! \e[1;31m(Please MAKE REALLY SURE this is a Kingston Fury ${submodel} DDR5 RGB!)\e[0m"
+							debug_color='1;32'
+							if [[ "${debug}" != 'true' ]]; then
+								echo "${lshw}" | sed -n -e "/*-bank:${bank}/,/*/p" | head -n -1 | tail -n +2 | sed -e "s/          \+/   /g"
+							fi
+							else
+								echo -e "\e[1;31m- RAM in slot ${ramslot} on SMBus i2c-${smbus_number_check} doesn't seems to be a Kingston Fury ${supported_submodels} DDR5!\e[0m"
+								debug_color='1;31'
+							fi
+						else
+							echo -e "\e[1;31m- RAM in slot ${ramslot} on SMBus i2c-${smbus_number_check} doesn't seems to be a Kingston Fury ${supported_submodels} DDR5! \e[0m"
+							echo -e "\e[1;31m- Expected Register value: ${ramslot_register_one_expected_hex}, Actual value: ${ramslot_register_21_detected_hex} \e[0m"
+							echo -e "\e[1;31m- Expected Register value: ${ramslot_register_two_expected_hex}, Actual value: ${ramslot_register_25_detected_hex} \e[0m"
+							echo -e "\e[1;31m- Expected Register value: ${ramslot_register_three_expected_hex}, Actual value: ${ramslot_register_27_detected_hex} \e[0m"
+							debug_color='1;31'
+						fi
 					fi
 				fi
 				check_hex_values "${ramstick_hex} ${ramslot_value_one_check_hex} ${ramslot_value_two_check_hex} ${ramslot_value_expected_hex}"
@@ -1912,6 +1914,8 @@ Option --wait <wait_value> will set the sleep time between i2cset commands. Acce
 If no\wrong value has been entered, the wait time will default to 0.015.
 Anyway this script will retry (for at most 20 times and then will abort) if an i2cset command fails, so you can keep wait time very low and don't worry about write errors.
 
+Option --skip-model-detection will assume the installed RAM is Kingston Fury without performing any check.
+
 ### EXAMPLES
 
 Search for RAM 2 on all SMBuses, then choose a mode from a list:
@@ -1992,6 +1996,7 @@ Options:
 -w, --wait <value>              Enter a sleep time between i2cset commands. Default is 0.015.
 -n, --nowarn                    Apply settings without warning.
 -a, --ask                       Ask for input instead of automatically set default values.
+-M, --skip-model-detection      Does not check if installed RAM is Kingston Fury.
 -S, --simulation                Perform a simulation.
 -D, --debug                     Print info useful for debugging, then exits.
 -h, --help                      Show this help.
@@ -2076,32 +2081,33 @@ supported_submodels='BEAST\RENEGADE'
 for opt in "$@"; do
 	shift
 	case "$opt" in
-		'--smbus')				set -- "$@" '-s' ;;
-		'--ramslots')			set -- "$@" '-m' ;;
-		'--mode')				set -- "$@" '-d' ;;
-		'--speed')				set -- "$@" '-p' ;;
-		'--delay')				set -- "$@" '-e' ;;
-		'--length')				set -- "$@" '-q' ;;
-		'--direction')			set -- "$@" '-i' ;;
-		'--color')				set -- "$@" '-c' ;;
-		'--byledcolors')		set -- "$@" '-b' ;;
-		'--tencolors')			set -- "$@" '-t' ;;
-		'--tencolorsnumber')	set -- "$@" '-u' ;;
-		'--backcolor')			set -- "$@" '-k' ;;
-		'--randomcolor')		set -- "$@" '-z' ;;
-		'--brightness')			set -- "$@" '-l' ;;
-		'--off')				set -- "$@" '-o' ;;
-		'--wait')				set -- "$@" '-w' ;;
-		'--nowarn')				set -- "$@" '-n' ;;
-		'--ask')				set -- "$@" '-a' ;;
-		'--simulation')			set -- "$@" '-S' ;;
-		'--debug')				set -- "$@" '-D' ;;
-		'--help')				set -- "$@" '-h' ;;
-		*)						set -- "$@" "$opt"
+		'--smbus')					set -- "$@" '-s' ;;
+		'--ramslots')				set -- "$@" '-m' ;;
+		'--mode')					set -- "$@" '-d' ;;
+		'--speed')					set -- "$@" '-p' ;;
+		'--delay')					set -- "$@" '-e' ;;
+		'--length')					set -- "$@" '-q' ;;
+		'--direction')				set -- "$@" '-i' ;;
+		'--color')					set -- "$@" '-c' ;;
+		'--byledcolors')			set -- "$@" '-b' ;;
+		'--tencolors')				set -- "$@" '-t' ;;
+		'--tencolorsnumber')		set -- "$@" '-u' ;;
+		'--backcolor')				set -- "$@" '-k' ;;
+		'--randomcolor')			set -- "$@" '-z' ;;
+		'--brightness')				set -- "$@" '-l' ;;
+		'--off')					set -- "$@" '-o' ;;
+		'--wait')					set -- "$@" '-w' ;;
+		'--nowarn')					set -- "$@" '-n' ;;
+		'--ask')					set -- "$@" '-a' ;;
+		'--skip-model-detection')	set -- "$@" '-M' ;;
+		'--simulation')				set -- "$@" '-S' ;;
+		'--debug')					set -- "$@" '-D' ;;
+		'--help')					set -- "$@" '-h' ;;
+		*)							set -- "$@" "$opt"
 	esac
 done
 
-while getopts "s:m:d:p:e:q:i:c:b:t:u:k:zl:ow:naSDh" opt; do
+while getopts "s:m:d:p:e:q:i:c:b:t:u:k:zl:ow:naMSDh" opt; do
 	case ${opt} in
 		s ) smbus_number="${OPTARG}"
 		;;
@@ -2138,6 +2144,8 @@ while getopts "s:m:d:p:e:q:i:c:b:t:u:k:zl:ow:naSDh" opt; do
 		n ) nowarn='true'
 		;;
 		a ) ask='true'; ask_stored="${ask}"
+		;;
+		M ) skip_model_detection='true'
 		;;
 		S ) simulation='true'
 		;;
