@@ -2,7 +2,7 @@
 Description=Set Kingston Fury RAM RGB 
 
 [Service]
-ExecStart=/opt/kfrgb/i2cset-static-blue.sh
+ExecStart=/bin/bash /opt/kfrgb/i2cset-static-blue.sh
 
 [Install]
 WantedBy=multi-user.target
