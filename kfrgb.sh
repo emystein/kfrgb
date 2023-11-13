@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # kfrgb
 
 # Version:    0.9.5
