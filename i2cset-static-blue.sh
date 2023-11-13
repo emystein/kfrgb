@@ -1,4 +1,4 @@
-sleep_duration=0.0080
+sleep_duration=0.0100
 
 # Setting mode static for RAM on slot 2 in SMBus 2
 # Initializing...
