@@ -1,3 +1,2 @@
-#!/bin/bash
-/opt/kfrgb/kfrgb.sh --nowarn --off
+$PWD/kfrgb.sh --skip-model-detection --nowarn --off
 
