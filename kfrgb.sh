@@ -1751,8 +1751,8 @@ function i2cset_retry() {
 	command="${@}"
 	retry_count='0'
 	while true; do
+		echo "    i2cset ${command}"
 		if [[ "${simulation}" = 'true' ]] && [[ "${detection}" != 'true' ]]; then
-			echo "    i2cset ${command}"
 			break
 		else
 			if i2cset ${command} &>/dev/null; then
