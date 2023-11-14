@@ -23,6 +23,9 @@ Not all modes are fully supported:
 - Modes twilight, teleport, flame, voltage, countdown and rhythm: we lack the hex values to set any of their parameters, nevertheless i've used values from other modes to set them. It works, but likely not the same way as with the official app.
 - Modes breath, breath_byledcolor and dynamic: we lack the hex values to set speed, values from other modes doesn't work. These modes will run at their default speed or the last speed set by the official app.
 
+### SEE ALSO
+https://gitlab.com/CalcProgrammer1/OpenRGB/-/issues/2879
+
 ### PREREQUISITES
 - https://gitlab.com/CalcProgrammer1/OpenRGB#smbus-access-1
 - Depending on the Motherboard model, the kernel option 'acpi\_enforce\_resources=lax' set. See: https://wiki.archlinux.org/title/Lm_sensors
