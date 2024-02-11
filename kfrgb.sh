@@ -2008,7 +2008,7 @@ function initialize() {
 		exit_one
 	fi
 
-	for bin in i2cset yad perl lshw; do
+	for bin in i2cset perl lshw; do
 		if ! command -v "${bin}" >/dev/null; then
 			error_missing='true'
 			if [[ "${bin}" = 'i2cset' ]]; then
